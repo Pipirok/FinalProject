@@ -1,0 +1,492 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="LaundryDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Orders">
+          <Key>
+            <PropertyRef Name="OrderID" />
+          </Key>
+          <Property Name="OrderID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerName" Type="nvarchar" MaxLength="50" />
+          <Property Name="CustomerSurname" Type="nvarchar" MaxLength="50" />
+          <Property Name="LaundryWeight" Type="int" />
+          <Property Name="OrderStatus" Type="int" />
+          <Property Name="OrderDate" Type="datetime" />
+          <Property Name="TotalCost" Type="int" />
+        </EntityType>
+        <EntityType Name="OrderStatus">
+          <Key>
+            <PropertyRef Name="StatusID" />
+          </Key>
+          <Property Name="StatusID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="OrdersToServices">
+          <Key>
+            <PropertyRef Name="_ID" />
+          </Key>
+          <Property Name="_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrderID" Type="int" />
+          <Property Name="ServiceID" Type="int" />
+        </EntityType>
+        <EntityType Name="Services">
+          <Key>
+            <PropertyRef Name="ServiceID" />
+          </Key>
+          <Property Name="ServiceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DisplayName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Fee" Type="int" />
+          <Property Name="Duration" Type="int" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Password" Type="nvarchar(max)" />
+          <Property Name="AccessLevel" Type="int" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'LaundryDB.dbo.OrdersAndServices' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="OrdersAndServices">
+          <Key>
+            <PropertyRef Name="OrderID" />
+          </Key>
+          <Property Name="OrderID" Type="int" Nullable="false" />
+          <Property Name="DisplayName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Fee" Type="int" />
+          <Property Name="Duration" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'LaundryDB.dbo.OrdersAndStatuses' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="OrdersAndStatuses">
+          <Key>
+            <PropertyRef Name="OrderID" />
+          </Key>
+          <Property Name="OrderID" Type="int" Nullable="false" />
+          <Property Name="CustomerName" Type="nvarchar" MaxLength="50" />
+          <Property Name="CustomerSurname" Type="nvarchar" MaxLength="50" />
+          <Property Name="LaundryWeight" Type="int" />
+          <Property Name="TotalCost" Type="int" />
+          <Property Name="Status" Type="nvarchar" MaxLength="50" />
+          <Property Name="OrderDate" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'LaundryDB.dbo.OrderServices' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="OrderServices">
+          <Key>
+            <PropertyRef Name="ServiceID" />
+          </Key>
+          <Property Name="ServiceID" Type="int" Nullable="false" />
+          <Property Name="DisplayName" Type="nvarchar" MaxLength="50" />
+          <Property Name="OrderID" Type="int" />
+        </EntityType>
+        <Association Name="OrderID_FK">
+          <End Role="Orders" Type="Self.Orders" Multiplicity="0..1" />
+          <End Role="OrdersToServices" Type="Self.OrdersToServices" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Orders">
+              <PropertyRef Name="OrderID" />
+            </Principal>
+            <Dependent Role="OrdersToServices">
+              <PropertyRef Name="OrderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="OrderStatus_FK">
+          <End Role="OrderStatus" Type="Self.OrderStatus" Multiplicity="0..1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrderStatus">
+              <PropertyRef Name="StatusID" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="OrderStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="WashTypeID_FK">
+          <End Role="Services" Type="Self.Services" Multiplicity="0..1" />
+          <End Role="OrdersToServices" Type="Self.OrdersToServices" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Services">
+              <PropertyRef Name="ServiceID" />
+            </Principal>
+            <Dependent Role="OrdersToServices">
+              <PropertyRef Name="ServiceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="AddOrder" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerName" Type="nvarchar" Mode="In" />
+          <Parameter Name="CustomerSurname" Type="nvarchar" Mode="In" />
+          <Parameter Name="LaundryWeight" Type="int" Mode="In" />
+          <Parameter Name="OrderDate" Type="datetime" Mode="In" />
+          <Parameter Name="TotalCost" Type="int" Mode="In" />
+        </Function>
+        <Function Name="AddOrderService" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="OrderID" Type="int" Mode="In" />
+          <Parameter Name="ServiceID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="AddService" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="DisplayName" Type="nvarchar" Mode="In" />
+          <Parameter Name="Fee" Type="int" Mode="In" />
+          <Parameter Name="Duration" Type="int" Mode="In" />
+        </Function>
+        <Function Name="AddUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UserName" Type="nvarchar" Mode="In" />
+          <Parameter Name="Password" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="FullName" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="DeleteOrder" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="OrderID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="DeleteOrderServices" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="OrderID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="DeleteService" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ServiceID" Type="int" Mode="In" />
+        </Function>
+        <EntityContainer Name="LaundryDBModelStoreContainer">
+          <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrderStatus" EntityType="Self.OrderStatus" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrdersToServices" EntityType="Self.OrdersToServices" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Services" EntityType="Self.Services" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrdersAndServices" EntityType="Self.OrdersAndServices" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [OrdersAndServices].[OrderID] AS [OrderID], 
+    [OrdersAndServices].[DisplayName] AS [DisplayName], 
+    [OrdersAndServices].[Fee] AS [Fee], 
+    [OrdersAndServices].[Duration] AS [Duration]
+    FROM [dbo].[OrdersAndServices] AS [OrdersAndServices]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="OrdersAndStatuses" EntityType="Self.OrdersAndStatuses" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [OrdersAndStatuses].[OrderID] AS [OrderID], 
+    [OrdersAndStatuses].[CustomerName] AS [CustomerName], 
+    [OrdersAndStatuses].[CustomerSurname] AS [CustomerSurname], 
+    [OrdersAndStatuses].[LaundryWeight] AS [LaundryWeight], 
+    [OrdersAndStatuses].[TotalCost] AS [TotalCost], 
+    [OrdersAndStatuses].[Status] AS [Status], 
+    [OrdersAndStatuses].[OrderDate] AS [OrderDate]
+    FROM [dbo].[OrdersAndStatuses] AS [OrdersAndStatuses]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="OrderServices" EntityType="Self.OrderServices" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [OrderServices].[ServiceID] AS [ServiceID], 
+    [OrderServices].[DisplayName] AS [DisplayName], 
+    [OrderServices].[OrderID] AS [OrderID]
+    FROM [dbo].[OrderServices] AS [OrderServices]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="OrderID_FK" Association="Self.OrderID_FK">
+            <End Role="Orders" EntitySet="Orders" />
+            <End Role="OrdersToServices" EntitySet="OrdersToServices" />
+          </AssociationSet>
+          <AssociationSet Name="OrderStatus_FK" Association="Self.OrderStatus_FK">
+            <End Role="OrderStatus" EntitySet="OrderStatus" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="WashTypeID_FK" Association="Self.WashTypeID_FK">
+            <End Role="Services" EntitySet="Services" />
+            <End Role="OrdersToServices" EntitySet="OrdersToServices" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="LaundryDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="OrderID" />
+          </Key>
+          <Property Name="OrderID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerSurname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LaundryWeight" Type="Int32" />
+          <Property Name="OrderStatus" Type="Int32" />
+          <Property Name="OrderDate" Type="DateTime" Precision="3" />
+          <Property Name="TotalCost" Type="Int32" />
+          <NavigationProperty Name="OrdersToServices" Relationship="Self.OrderID_FK" FromRole="Orders" ToRole="OrdersToServices" />
+          <NavigationProperty Name="OrderStatu" Relationship="Self.OrderStatus_FK" FromRole="Orders" ToRole="OrderStatus" />
+        </EntityType>
+        <EntityType Name="OrderStatu">
+          <Key>
+            <PropertyRef Name="StatusID" />
+          </Key>
+          <Property Name="StatusID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Orders" Relationship="Self.OrderStatus_FK" FromRole="OrderStatus" ToRole="Orders" />
+        </EntityType>
+        <EntityType Name="OrdersToService">
+          <Key>
+            <PropertyRef Name="C_ID" />
+          </Key>
+          <Property Name="C_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderID" Type="Int32" />
+          <Property Name="ServiceID" Type="Int32" />
+          <NavigationProperty Name="Order" Relationship="Self.OrderID_FK" FromRole="OrdersToServices" ToRole="Orders" />
+          <NavigationProperty Name="Service" Relationship="Self.WashTypeID_FK" FromRole="OrdersToServices" ToRole="Services" />
+        </EntityType>
+        <EntityType Name="Service">
+          <Key>
+            <PropertyRef Name="ServiceID" />
+          </Key>
+          <Property Name="ServiceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DisplayName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Fee" Type="Int32" />
+          <Property Name="Duration" Type="Int32" />
+          <NavigationProperty Name="OrdersToServices" Relationship="Self.WashTypeID_FK" FromRole="Services" ToRole="OrdersToServices" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AccessLevel" Type="Int32" />
+          <Property Name="FullName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="OrdersAndService">
+          <Key>
+            <PropertyRef Name="OrderID" />
+          </Key>
+          <Property Name="OrderID" Type="Int32" Nullable="false" />
+          <Property Name="DisplayName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Fee" Type="Int32" />
+          <Property Name="Duration" Type="Int32" />
+        </EntityType>
+        <Association Name="OrderID_FK">
+          <End Role="Orders" Type="Self.Order" Multiplicity="0..1" />
+          <End Role="OrdersToServices" Type="Self.OrdersToService" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Orders">
+              <PropertyRef Name="OrderID" />
+            </Principal>
+            <Dependent Role="OrdersToServices">
+              <PropertyRef Name="OrderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="OrderStatus_FK">
+          <End Role="OrderStatus" Type="Self.OrderStatu" Multiplicity="0..1" />
+          <End Role="Orders" Type="Self.Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OrderStatus">
+              <PropertyRef Name="StatusID" />
+            </Principal>
+            <Dependent Role="Orders">
+              <PropertyRef Name="OrderStatus" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="WashTypeID_FK">
+          <End Role="Services" Type="Self.Service" Multiplicity="0..1" />
+          <End Role="OrdersToServices" Type="Self.OrdersToService" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Services">
+              <PropertyRef Name="ServiceID" />
+            </Principal>
+            <Dependent Role="OrdersToServices">
+              <PropertyRef Name="ServiceID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="LaundryDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Orders" EntityType="Self.Order" />
+          <EntitySet Name="OrderStatus" EntityType="Self.OrderStatu" />
+          <EntitySet Name="OrdersToServices" EntityType="Self.OrdersToService" />
+          <EntitySet Name="Services" EntityType="Self.Service" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="OrdersAndServices" EntityType="Self.OrdersAndService" />
+          <AssociationSet Name="OrderID_FK" Association="Self.OrderID_FK">
+            <End Role="Orders" EntitySet="Orders" />
+            <End Role="OrdersToServices" EntitySet="OrdersToServices" />
+          </AssociationSet>
+          <AssociationSet Name="OrderStatus_FK" Association="Self.OrderStatus_FK">
+            <End Role="OrderStatus" EntitySet="OrderStatus" />
+            <End Role="Orders" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="WashTypeID_FK" Association="Self.WashTypeID_FK">
+            <End Role="Services" EntitySet="Services" />
+            <End Role="OrdersToServices" EntitySet="OrdersToServices" />
+          </AssociationSet>
+          <FunctionImport Name="AddOrder">
+            <Parameter Name="CustomerName" Mode="In" Type="String" />
+            <Parameter Name="CustomerSurname" Mode="In" Type="String" />
+            <Parameter Name="LaundryWeight" Mode="In" Type="Int32" />
+            <Parameter Name="OrderDate" Mode="In" Type="DateTime" />
+            <Parameter Name="TotalCost" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="AddOrderService">
+            <Parameter Name="OrderID" Mode="In" Type="Int32" />
+            <Parameter Name="ServiceID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="DeleteOrder">
+          <Parameter Name="OrderID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="OrdersAndStatuses" EntityType="LaundryDBModel.OrdersAndStatus" />
+          <FunctionImport Name="DeleteService">
+          <Parameter Name="ServiceID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="AddService">
+            <Parameter Name="DisplayName" Mode="In" Type="String" />
+            <Parameter Name="Fee" Mode="In" Type="Int32" />
+            <Parameter Name="Duration" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="AddUser">
+            <Parameter Name="UserName" Mode="In" Type="String" />
+            <Parameter Name="Password" Mode="In" Type="String" />
+            <Parameter Name="FullName" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="DeleteOrderServices">
+          <Parameter Name="OrderID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="OrderServices" EntityType="LaundryDBModel.OrderService" />
+        </EntityContainer>
+        <EntityType Name="OrdersAndStatus">
+          <Key>
+            <PropertyRef Name="OrderID" />
+          </Key>
+          <Property Name="OrderID" Type="Int32" Nullable="false" />
+          <Property Name="CustomerName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerSurname" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LaundryWeight" Type="Int32" />
+          <Property Name="TotalCost" Type="Int32" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OrderDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="OrderService">
+          <Key>
+            <PropertyRef Name="ServiceID" />
+          </Key>
+          <Property Name="ServiceID" Type="Int32" Nullable="false" />
+          <Property Name="DisplayName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="OrderID" Type="Int32" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="LaundryDBModelStoreContainer" CdmEntityContainer="LaundryDBEntities">
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="LaundryDBModel.Order">
+              <MappingFragment StoreEntitySet="Orders">
+                <ScalarProperty Name="OrderID" ColumnName="OrderID" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="CustomerSurname" ColumnName="CustomerSurname" />
+                <ScalarProperty Name="LaundryWeight" ColumnName="LaundryWeight" />
+                <ScalarProperty Name="OrderStatus" ColumnName="OrderStatus" />
+                <ScalarProperty Name="OrderDate" ColumnName="OrderDate" />
+                <ScalarProperty Name="TotalCost" ColumnName="TotalCost" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrderStatus">
+            <EntityTypeMapping TypeName="LaundryDBModel.OrderStatu">
+              <MappingFragment StoreEntitySet="OrderStatus">
+                <ScalarProperty Name="StatusID" ColumnName="StatusID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrdersToServices">
+            <EntityTypeMapping TypeName="LaundryDBModel.OrdersToService">
+              <MappingFragment StoreEntitySet="OrdersToServices">
+                <ScalarProperty Name="C_ID" ColumnName="_ID" />
+                <ScalarProperty Name="OrderID" ColumnName="OrderID" />
+                <ScalarProperty Name="ServiceID" ColumnName="ServiceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Services">
+            <EntityTypeMapping TypeName="LaundryDBModel.Service">
+              <MappingFragment StoreEntitySet="Services">
+                <ScalarProperty Name="ServiceID" ColumnName="ServiceID" />
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                <ScalarProperty Name="Fee" ColumnName="Fee" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="LaundryDBModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="AccessLevel" ColumnName="AccessLevel" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrdersAndServices">
+            <EntityTypeMapping TypeName="LaundryDBModel.OrdersAndService">
+              <MappingFragment StoreEntitySet="OrdersAndServices">
+                <ScalarProperty Name="OrderID" ColumnName="OrderID" />
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                <ScalarProperty Name="Fee" ColumnName="Fee" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="AddOrder" FunctionName="LaundryDBModel.Store.AddOrder" />
+          <FunctionImportMapping FunctionImportName="AddOrderService" FunctionName="LaundryDBModel.Store.AddOrderService" />
+          <FunctionImportMapping FunctionImportName="DeleteOrder" FunctionName="LaundryDBModel.Store.DeleteOrder" />
+          <EntitySetMapping Name="OrdersAndStatuses">
+            <EntityTypeMapping TypeName="LaundryDBModel.OrdersAndStatus">
+              <MappingFragment StoreEntitySet="OrdersAndStatuses">
+                <ScalarProperty Name="OrderDate" ColumnName="OrderDate" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="TotalCost" ColumnName="TotalCost" />
+                <ScalarProperty Name="LaundryWeight" ColumnName="LaundryWeight" />
+                <ScalarProperty Name="CustomerSurname" ColumnName="CustomerSurname" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="OrderID" ColumnName="OrderID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="DeleteService" FunctionName="LaundryDBModel.Store.DeleteService" />
+          <FunctionImportMapping FunctionImportName="AddService" FunctionName="LaundryDBModel.Store.AddService" />
+          <FunctionImportMapping FunctionImportName="AddUser" FunctionName="LaundryDBModel.Store.AddUser" />
+          <FunctionImportMapping FunctionImportName="DeleteOrderServices" FunctionName="LaundryDBModel.Store.DeleteOrderServices" />
+          <EntitySetMapping Name="OrderServices">
+            <EntityTypeMapping TypeName="LaundryDBModel.OrderService">
+              <MappingFragment StoreEntitySet="OrderServices">
+                <ScalarProperty Name="OrderID" ColumnName="OrderID" />
+                <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+                <ScalarProperty Name="ServiceID" ColumnName="ServiceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

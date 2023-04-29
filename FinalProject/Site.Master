@@ -1,0 +1,117 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="FinalProject.Site" %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title><%: Page.Title %></title>
+    <link href="~/Content/styles.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="/Content/favicon.png" />
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+<body class="sb-nav-fixed">
+    <form id="form1" runat="server">
+
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <!-- Navbar Brand-->
+            <a class="navbar-brand ps-3" href="/Admin/Index.aspx">Laundrie</a>
+            <!-- Sidebar Toggle-->
+            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+            <div class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0"></div>
+            <!-- Navbar-->
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li>
+                            <asp:Label CssClass="dropdown-item-text" runat="server" ID="LblUsername2"></asp:Label></li>
+                        <li><a class="dropdown-item" href="/Admin/EditProfile.aspx">Edit info</a></li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li>
+                            <asp:LinkButton runat="server" ID="BtnLogout" CssClass="dropdown-item text-danger" OnClick="BtnLogout_Click" Text="Log out"></asp:LinkButton>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">Main</div>
+                            <a class="nav-link" href="/Admin/Index.aspx">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Dashboard
+                            </a>
+                            <div class="sb-sidenav-menu-heading">Manage</div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseOrders" aria-expanded="false" aria-controls="collapseOrders">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                Orders
+                               
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseOrders" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="/Admin/Orders.aspx">All orders</a>
+                                    <a class="nav-link" href="/Admin/AddOrder.aspx">Add an order</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapsed" href="#collapseServices" aria-collapsed="false" data-bs-toggle="collapse" data-bs-target="#collapseServices" aria-expanded="false" aria-controls="collapseServices">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                Services
+                               
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseServices" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="/Admin/Services.aspx">All services</a>
+                                    <a class="nav-link" href="/Admin/AddService.aspx">Add a service</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                Users
+                               
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseUsers" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="/Admin/Profiles.aspx">All users</a>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sb-sidenav-footer">
+                        <div class="small">Logged in as:</div>
+                        <a href="/Admin/EditProfile.aspx">
+                            <asp:Label runat="server" ID="LblUsername"></asp:Label>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+            <div id="layoutSidenav_content">
+
+                <asp:ContentPlaceHolder ID="MainCont" runat="server">
+                </asp:ContentPlaceHolder>
+
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid px-4">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; Laundrie 2023</div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        <script src="../Scripts/scripts.js"></script>
+        <script src="../Scripts/bootstrap.bundle.js"></script>
+    </form>
+</body>
+</html>

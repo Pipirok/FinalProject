@@ -1,0 +1,31 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="PreAdmin.master.cs" Inherits="FinalProject.PreAdmin" %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head runat="server">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title><%:Page.Title%></title>
+    <link rel="icon" type="image/x-icon" href="/Content/favicon.png" />
+    <link href="~/Content/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-primary">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+        <div id="layoutAuthentication_footer">
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Laundrie 2023</div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/scripts.js"></script>
+</body>
+</html>
